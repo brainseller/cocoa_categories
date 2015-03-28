@@ -65,7 +65,7 @@
         greenHexValue=[NSString stringWithFormat:@"%02x", greenIntValue];
         blueHexValue=[NSString stringWithFormat:@"%02x", blueIntValue];
         
-        // Concatenate strings and add "#"
+        // Concatenate strings and add prefix
         return [NSString stringWithFormat:@"%@%@%@%@", prefix, redHexValue, greenHexValue, blueHexValue];
     }
     return nil;
