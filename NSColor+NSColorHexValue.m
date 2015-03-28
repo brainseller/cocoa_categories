@@ -1,8 +1,9 @@
 //
-//  NSColor+NSColorHexValue.h
+//  NSColor+NSColorHexValue.m
+//  ScoreBoard-TV
 //
 //  Created by Frank Fuchs on 26/03/15.
-//  http://frankfuchs.net
+//  Copyright (c) 2015 BrainSellers. All rights reserved.
 //
 
 #import "NSColor+NSColorHexValue.h"
@@ -11,15 +12,23 @@
 
 + (NSColor*)colorWithHexColorString:(NSString*)hexString
 {
-    NSColor* result = nil;
-    unsigned colorCode = 0;
+    NSColor *result = nil;
+    NSString *cleanedHexString = [hexString stringByReplacingOccurrencesOfString:@"#" withString:@""];
+    cleanedHexString = [cleanedHexString stringByReplacingOccurrencesOfString:@"0x" withString:@""];
+    // after removing # or 0x, check for length to correct strings like 03f into 0033ff
+    if (cleanedHexString.length == 3) {
+        NSString *fl = [cleanedHexString substringWithRange:NSMakeRange(0, 1)];
+        NSString *sl = [cleanedHexString substringWithRange:NSMakeRange(1, 1)];
+        NSString *tl = [cleanedHexString substringWithRange:NSMakeRange(2, 1)];
+        cleanedHexString = [NSString stringWithFormat:@"%@%@%@%@%@%@",fl,fl,sl,sl,tl,tl];
+    }
+    
+    unsigned int colorCode = 0;
     unsigned char redByte, greenByte, blueByte;
     
-    if (nil != hexString)
-    {
-        NSScanner* scanner = [NSScanner scannerWithString:hexString];
-        (void) [scanner scanHexInt:&colorCode]; // ignore error
-    }
+    NSScanner* scanner = [NSScanner scannerWithString:cleanedHexString];
+    (void) [scanner scanHexInt:&colorCode];
+    
     redByte = (unsigned char)(colorCode >> 16);
     greenByte = (unsigned char)(colorCode >> 8);
     blueByte = (unsigned char)(colorCode); // masks off high bits
@@ -32,7 +41,7 @@
     return result;
 }
 
--(NSString *)hexColor
+-(NSString *)hexColorWithPrefix:(NSString *)prefix
 {
     CGFloat redFloatValue, greenFloatValue, blueFloatValue;
     int redIntValue, greenIntValue, blueIntValue;
@@ -57,7 +66,7 @@
         blueHexValue=[NSString stringWithFormat:@"%02x", blueIntValue];
         
         // Concatenate strings and add "#"
-        return [NSString stringWithFormat:@"#%@%@%@", redHexValue, greenHexValue, blueHexValue];
+        return [NSString stringWithFormat:@"%@%@%@%@", prefix, redHexValue, greenHexValue, blueHexValue];
     }
     return nil;
 }
